@@ -1,0 +1,10 @@
+bin/
+build/
+release/
+debug/
+publish
+publish.py
+.Ds_Store
+.idea/
+Win32/
+/Default.xml
