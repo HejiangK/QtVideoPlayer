@@ -10,6 +10,7 @@
 #include <QVBoxLayout>
 #include <QTextEdit>
 #include <QPushButton>
+#include <QEvent>
 
 #include "video_player.h"
 
@@ -19,6 +20,8 @@ public:
     MainWindow(QWidget *parent = nullptr);
 
     virtual ~MainWindow();
+
+    bool eventFilter(QObject *watched, QEvent *event) override;
 
 private:
 
@@ -31,6 +34,8 @@ private:
     QTextEdit       *addressTextBox;
 
     QPushButton     *btnPlay;
+
+    QPushButton     *btnPause;
 
     QPushButton     *btnStop;
 

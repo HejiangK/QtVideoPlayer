@@ -34,6 +34,13 @@ MainWindow::MainWindow(QWidget *parent) : QWidget(parent, 0)
     btnPlay->setText("播放");
     btnPlay->installEventFilter(this);
 
+    btnPause = new QPushButton(this);
+
+    btnPause->setSizePolicy(QSizePolicy::Fixed,QSizePolicy::Preferred);
+    btnPause->setMinimumSize(30,0);
+    btnPause->setText("暂停");
+    btnPause->installEventFilter(this);
+
     btnStop = new QPushButton(this);
 
     btnStop->setSizePolicy(QSizePolicy::Fixed,QSizePolicy::Preferred);
@@ -43,6 +50,7 @@ MainWindow::MainWindow(QWidget *parent) : QWidget(parent, 0)
 
     toolLayout->addWidget(addressTextBox);
     toolLayout->addWidget(btnPlay);
+    toolLayout->addWidget(btnPause);
     toolLayout->addWidget(btnStop);
 
     mainLayout->addLayout(toolLayout);
@@ -52,4 +60,25 @@ MainWindow::MainWindow(QWidget *parent) : QWidget(parent, 0)
 MainWindow::~MainWindow()
 {
 
+}
+
+bool MainWindow::eventFilter(QObject *watched, QEvent *event)
+{
+    if(event->type() == QEvent::MouseButtonPress)
+    {
+        if(watched == btnPlay)
+        {
+            videoPlayer->playPath(addressTextBox->toPlainText());
+
+        }else if(watched == btnPause)
+        {
+            videoPlayer->pause();
+
+        }else if(watched == btnStop)
+        {
+            videoPlayer->stop();
+        }
+    }
+
+    return QObject::eventFilter(watched, event);
 }
