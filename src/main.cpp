@@ -1,7 +1,18 @@
 #include <iostream>
 
-int main()
+#include <QApplication>
+
+#include "main_window.h"
+
+int main(int argc,char **argv)
 {
-    std::cout << "Hello, World!" << std::endl;
-    return 0;
+    QApplication app(argc,argv);
+
+    MainWindow  window;
+
+    window.setMinimumSize(640,500);
+
+    window.show();
+
+    return app.exec();
 }
