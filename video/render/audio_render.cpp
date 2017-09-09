@@ -87,6 +87,6 @@ int64_t AudioRender::getCurAudioTime()
     int bytes_per_sec = 44100 *2 * 2;
 
     int64_t pts = this->curPts - static_cast<double>(size) / bytes_per_sec * 1000000;
-    
+
     return pts;
 }

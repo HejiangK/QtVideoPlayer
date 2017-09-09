@@ -13,12 +13,11 @@ ImageConvert::ImageConvert(AVPixelFormat in_pixelFormat, int in_width, int in_he
     this->in_height			= in_height;
     this->out_width			= out_width;
     this->out_height		= out_height;
-
-    this->swsContext = sws_getContext(in_width, in_height, in_pixelFormat,
+    this->swsContext        = sws_getContext(in_width, in_height, in_pixelFormat,
                                               out_width, out_height, out_pixelFormat,
                                               SWS_POINT, nullptr, nullptr, nullptr);
-    this->frame		= av_frame_alloc();
-    this->buffer	= (uint8_t*)av_malloc(avpicture_get_size(out_pixelFormat, out_width, out_height));
+    this->frame		        = av_frame_alloc();
+    this->buffer	        = (uint8_t*)av_malloc(avpicture_get_size(out_pixelFormat, out_width, out_height));
 
     avpicture_fill((AVPicture *)this->frame, this->buffer, out_pixelFormat, out_width, out_height);
 
