@@ -24,6 +24,7 @@ MainWindow::MainWindow(QWidget *parent) : QWidget(parent, 0)
 
     addressTextBox = new QTextEdit(this);
 
+    addressTextBox->setText("rtmp://live.hkstv.hk.lxdns.com/live/hks");
     addressTextBox->setSizePolicy(QSizePolicy::Preferred,QSizePolicy::Fixed);
     addressTextBox->setMinimumSize(0,25);
 

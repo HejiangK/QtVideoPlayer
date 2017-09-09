@@ -11,6 +11,7 @@
 
 #include "video/data/data_context.h"
 #include "video/data/image_cvt.h"
+#include "audio_render.h"
 
 class VideoThread : public QThread
 {
@@ -24,6 +25,8 @@ public:
 
     DataContext *getDataContext();
 
+    void setAudio(AudioRender *audioRender);
+
 signals:
 
     void onFrame(const QImage &frame);
@@ -36,6 +39,8 @@ private:
     DataContext         *dataContext;
 
     QSize               size;
+
+    AudioRender         *audioRender;
 
 };
 

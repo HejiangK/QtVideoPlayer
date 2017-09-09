@@ -108,8 +108,10 @@ int64_t DataContext::getNextPts()
     return curPts + duration;
 }
 
-int DataContext::getBufferLength()
+int64_t DataContext::getBufferLength()
 {
+    QMutexLocker locker(&mutex);
+
     if(queue.length() != 0)
         return queue[queue.length() - 1]->pts - queue[0]->pts;
 

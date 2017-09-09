@@ -22,7 +22,11 @@ void VideoRender::begin()
 
         videoThread->setSize(size());
 
-        connect(videoThread, &VideoThread::onFrame,this,&VideoRender::onFrame,Qt::DirectConnection);
+        videoThread->setAudio(audioRender);
+
+        videoThread->start();
+
+        connect(videoThread, &VideoThread::onFrame,this,&VideoRender::onFrame);
     }
 
 }
@@ -72,4 +76,11 @@ void VideoRender::paintEvent(QPaintEvent *event)
 void VideoRender::onFrame(const QImage &frame)
 {
     this->frame = frame;
+
+    update();
+}
+
+void VideoRender::setAudio(AudioRender *audioRender)
+{
+    this->audioRender = audioRender;
 }

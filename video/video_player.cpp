@@ -12,6 +12,8 @@ VideoPlayer::VideoPlayer(QWidget *parent) : QWidget(parent, 0)
 
     audioRender = new AudioRender(this);
 
+    videoRender->setAudio(audioRender);
+
 }
 
 VideoPlayer::~VideoPlayer()

@@ -24,6 +24,8 @@ public:
 
     DataContext *getDataContext();
 
+    void setAudio(AudioRender *audioRender);
+
 protected slots:
 
     void onFrame(const QImage &frame);
@@ -39,6 +41,8 @@ private:
     QImage          frame;
 
     VideoThread     *videoThread;
+
+    AudioRender     *audioRender;
 
 };
 

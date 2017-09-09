@@ -6,7 +6,17 @@
 
 AudioRender::AudioRender(QObject *parent) : QObject(parent)
 {
-    audioThread = nullptr;
+    audioOutput     = nullptr;
+    audioThread     = nullptr;
+    outputBuffer    = nullptr;
+    curPts             = 0;
+
+    audioFormat.setSampleRate(44100);
+    audioFormat.setChannelCount(2);
+    audioFormat.setSampleSize(16);
+    audioFormat.setCodec("audio/pcm");
+    audioFormat.setByteOrder(QAudioFormat::LittleEndian);
+    audioFormat.setSampleType(QAudioFormat::SignedInt);
 }
 
 AudioRender::~AudioRender()
@@ -16,6 +26,19 @@ AudioRender::~AudioRender()
 
 void AudioRender::begin()
 {
+    if(audioOutput == nullptr)
+    {
+        QAudioDeviceInfo info(QAudioDeviceInfo::defaultOutputDevice());
+
+        if(info.isFormatSupported(audioFormat))
+        {
+            audioOutput = new QAudioOutput(info,audioFormat);
+            audioOutput->setBufferSize(1024 * 100);
+
+            outputBuffer = audioOutput->start();
+        }
+    }
+
     if(audioThread == nullptr)
     {
         audioThread = new AudioThread(this);
@@ -23,7 +46,7 @@ void AudioRender::begin()
         audioThread->setAudioFormat(AV_SAMPLE_FMT_S16,44100,2);
         audioThread->start();
 
-        connect(audioThread,&AudioThread::onAudioData,this,&AudioRender::onAudioData);
+        connect(audioThread,&AudioThread::onAudioData,this,&AudioRender::onAudioData,Qt::DirectConnection);
     }
 
 }
@@ -41,9 +64,11 @@ void AudioRender::finish()
     }
 }
 
-void AudioRender::onAudioData(uint8_t *buffer, int length, int64_t pts)
+void AudioRender::onAudioData(quint8 *buffer, int length, qint64 pts)
 {
+    this->curPts = pts;
 
+    outputBuffer->write((char*)buffer,length);
 }
 
 DataContext *AudioRender::getDataContext()
@@ -52,4 +77,16 @@ DataContext *AudioRender::getDataContext()
         return nullptr;
 
     return audioThread->getDataContext();
+}
+
+int64_t AudioRender::getCurAudioTime()
+{
+
+    int64_t size = audioOutput->bufferSize() - outputBuffer->bytesAvailable();
+
+    int bytes_per_sec = 44100 *2 * 2;
+
+    int64_t pts = this->curPts - static_cast<double>(size) / bytes_per_sec * 1000000;
+    
+    return pts;
 }

@@ -24,7 +24,7 @@ public:
 
 signals:
 
-    void onAudioData(uint8_t *buffer,int length,int64_t pts);
+    void onAudioData(quint8 *buffer,int length,qint64 pts);
 
 protected:
     void run() override;

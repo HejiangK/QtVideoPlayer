@@ -28,6 +28,10 @@ void VideoThread::run()
 {
     AvFrameContext  *videoFrame     = nullptr;
     ImageConvert    *imageContext   = nullptr;
+    int64_t         realTime        = 0;
+    int64_t         lastPts         = 0;
+    int64_t         delay           = 0;
+    int64_t         lastDelay       = 0;
 
     while (!isInterruptionRequested())
     {
@@ -56,6 +60,32 @@ void VideoThread::run()
         imageContext->convertImage(videoFrame->frame);
 
 
+        if(audioRender != nullptr)
+        {
+            realTime = audioRender->getCurAudioTime();
+
+            if(lastPts == 0)
+                lastPts = videoFrame->pts;
+
+            lastDelay   = delay;
+            delay       = videoFrame->pts - lastPts;
+
+            lastPts = videoFrame->pts;
+
+            if(delay < 0 || delay > 1000000)
+            {
+                delay = lastDelay != 0 ? lastDelay : 0;
+            }
+
+            if(delay != 0)
+            {
+                if(videoFrame->pts > realTime)
+                    QThread::usleep(delay * 1.5);
+//                else
+//                    QThread::usleep(delay / 1.5);
+            }
+        }
+
         QImage img(imageContext->buffer, size.width(), size.height(), QImage::Format_RGB32);
 
         emit onFrame(img);
@@ -67,4 +97,9 @@ void VideoThread::run()
     delete imageContext;
 
     this->deleteLater();
+}
+
+void VideoThread::setAudio(AudioRender *audioRender)
+{
+    this->audioRender = audioRender;
 }

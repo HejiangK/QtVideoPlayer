@@ -6,6 +6,8 @@
 #define QTVIDEOPLAYER_AUDIO_RENDER_H
 
 #include <QObject>
+#include <QAudioFormat>
+#include <QAudioOutput>
 
 #include "audio_thread.h"
 
@@ -22,13 +24,23 @@ public:
 
     DataContext *getDataContext();
 
+    int64_t getCurAudioTime();
+
 protected slots:
 
-    void onAudioData(uint8_t *buffer,int length,int64_t pts);
+    void onAudioData(quint8 *buffer,int length,qint64 pts);
 
 private:
 
     AudioThread     *audioThread;
+
+    QAudioFormat    audioFormat;
+
+    QAudioOutput    *audioOutput;
+
+    QIODevice       *outputBuffer;
+
+    int64_t         curPts;
 
 };
 

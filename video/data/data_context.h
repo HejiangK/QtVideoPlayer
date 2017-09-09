@@ -65,7 +65,7 @@ public:
 
     virtual void disponse();
 
-    virtual int getBufferLength();
+    virtual int64_t getBufferLength();
 
 protected:
 
