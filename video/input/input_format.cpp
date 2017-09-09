@@ -2,9 +2,9 @@
 // Created by 贺江 on 2017/8/31.
 //
 
-#include "avformat.h"
+#include "input_format.h"
 
-AvFormat::AvFormat()
+InputFormat::InputFormat()
 {
     this->inputFormat       = nullptr;
     this->audioCodecContext = nullptr;
@@ -28,7 +28,7 @@ AvFormat::AvFormat()
     this->packet        = av_packet_alloc();
 }
 
-AvFormat::~AvFormat()
+InputFormat::~InputFormat()
 {
     if(this->formatContext != nullptr)
     {
@@ -54,9 +54,9 @@ AvFormat::~AvFormat()
     }
 }
 
-int AvFormat::onStreamTimeOut(void *param)
+int InputFormat::onStreamTimeOut(void *param)
 {
-    AvFormat *format = (AvFormat*)param;
+    InputFormat *format = (InputFormat*)param;
 
     if (av_gettime() - format->getSynTime() > 1000 * 1000 * 10)
     {
@@ -67,17 +67,17 @@ int AvFormat::onStreamTimeOut(void *param)
     return 0;
 }
 
-void AvFormat::setOption(const char *key, const char *value)
+void InputFormat::setOption(const char *key, const char *value)
 {
     av_dict_set(&options, key, value, 0);
 }
 
-void AvFormat::setInputFormat(const char *format)
+void InputFormat::setInputFormat(const char *format)
 {
     this->inputFormat = av_find_input_format(format);
 }
 
-int AvFormat::openFormat(const char *path)
+int InputFormat::openFormat(const char *path)
 {
     setSynTime();
 
@@ -88,7 +88,7 @@ int AvFormat::openFormat(const char *path)
     return 0;
 }
 
-int AvFormat::openCodec(AVMediaType type)
+int InputFormat::openCodec(AVMediaType type)
 {
     AVCodecContext *codecContext    = nullptr;
     AVCodec        *codec           = nullptr;
@@ -131,7 +131,7 @@ int AvFormat::openCodec(AVMediaType type)
     return 0;
 }
 
-AvFrameContext *AvFormat::readFrame()
+AvFrameContext *InputFormat::readFrame()
 {
     AVCodecContext  *codecContext;
     double          vpts;
@@ -190,7 +190,7 @@ AvFrameContext *AvFormat::readFrame()
     return nullptr;
 }
 
-double AvFormat::synchronize(AVFrame *srcFrame, double pts)
+double InputFormat::synchronize(AVFrame *srcFrame, double pts)
 {
     double frame_delay;
 
@@ -207,21 +207,21 @@ double AvFormat::synchronize(AVFrame *srcFrame, double pts)
     return pts;
 }
 
-void AvFormat::terminal()
+void InputFormat::terminal()
 {
     QMutexLocker locker(&mutex);
 
     synTime = 0;
 }
 
-void AvFormat::setSynTime()
+void InputFormat::setSynTime()
 {
     QMutexLocker locker(&mutex);
 
     synTime = av_gettime();
 }
 
-int64_t AvFormat::getSynTime()
+int64_t InputFormat::getSynTime()
 {
     QMutexLocker locker(&mutex);
 

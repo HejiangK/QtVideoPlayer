@@ -6,28 +6,16 @@
 
 VideoPlayer::VideoPlayer(QWidget *parent) : QWidget(parent, 0)
 {
+    videoRender  = new VideoRender(this);
+
+    videoRender->resize(size());
+
+    audioRender = new AudioRender(this);
 
 }
 
 VideoPlayer::~VideoPlayer()
 {
-
-}
-
-void VideoPlayer::paintEvent(QPaintEvent *event)
-{
-    QPainter painter(this);
-
-    painter.setRenderHint(QPainter::Antialiasing, true);
-
-    painter.setBrush(QColor(0xcccccc));
-
-    painter.drawRect(0,0,this->width(),this->height());
-
-    if(!curFrame.isNull())
-    {
-        painter.drawImage(QPoint(0,0),curFrame);
-    }
 
 }
 
@@ -46,26 +34,16 @@ void VideoPlayer::playPath(const QString &path)
         return;
     }
 
+    videoRender->begin();
 
-    audioThread = new AudioThread(this);
+    audioRender->begin();
 
-    audioThread->setAudioFormat(AV_SAMPLE_FMT_S16,44100,2);
-    audioThread->start();
+    inputThread = new InputThread(this);
 
-    videoThread = new VideoThread(this);
-
-    videoThread->setSize(this->size());
-    videoThread->start();
-
-    inputReader = new InputReader(this);
-
-    inputReader->setPath(path);
-    inputReader->setVideoDataContext(videoThread->getDataContext());
-    inputReader->setAudioDataContext(audioThread->getDataContext());
-    inputReader->start();
-
-    connect(videoThread,&VideoThread::renderFrame,this,&VideoPlayer::onVideoFrame,Qt::DirectConnection);
-    connect(audioThread,&AudioThread::onAudioData,this,&VideoPlayer::onAudioData,Qt::DirectConnection);
+    inputThread->setPath(path);
+    inputThread->setVideoDataContext(videoRender->getDataContext());
+    inputThread->setAudioDataContext(audioRender->getDataContext());
+    inputThread->begin();
 
 }
 
@@ -76,17 +54,22 @@ void VideoPlayer::pause()
 
 void VideoPlayer::stop()
 {
+    videoRender->finish();
+
+    audioRender->finish();
+
+    if(inputThread != nullptr)
+    {
+        inputThread->finish();
+
+        inputThread->quit();
+
+        inputThread = nullptr;
+    }
 
 }
 
-void VideoPlayer::onVideoFrame(const QImage &frame)
+void VideoPlayer::resizeEvent(QResizeEvent *event)
 {
-    curFrame = frame.copy();
-
-    update();
-}
-
-void VideoPlayer::onAudioData(uint8_t *buffer, int length, int64_t pts)
-{
-
+    videoRender->resize(size());
 }

@@ -7,15 +7,15 @@
 
 #include <QThread>
 
-#include "avformat.h"
+#include "input_format.h"
 
-class InputReader : public QThread
+class InputThread : public QThread
 {
     Q_OBJECT
 public:
-    InputReader(QObject *parent);
+    InputThread(QObject *parent);
 
-    virtual ~InputReader();
+    virtual ~InputThread();
 
     void setPath(const QString &path);
 
@@ -41,7 +41,7 @@ protected:
 
 private:
 
-    AvFormat        *avFormat;
+    InputFormat        *avFormat;
 
     char            path[512];
 

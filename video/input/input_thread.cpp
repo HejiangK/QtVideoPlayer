@@ -2,16 +2,16 @@
 // Created by 贺江 on 2017/9/8.
 //
 
-#include "input_reader.h"
+#include "input_thread.h"
 
-InputReader::InputReader(QObject *parent) : QThread(parent)
+InputThread::InputThread(QObject *parent) : QThread(parent)
 {
     avFormat         = nullptr;
     videoDataContext = nullptr;
     audioDataContext = nullptr;
 }
 
-InputReader::~InputReader()
+InputThread::~InputThread()
 {
     if(avFormat != nullptr)
         delete avFormat;
@@ -19,35 +19,35 @@ InputReader::~InputReader()
     avFormat = nullptr;
 }
 
-void InputReader::setPath(const QString &path)
+void InputThread::setPath(const QString &path)
 {
     sprintf(this->path,"%s",path.toLatin1().data());
 }
 
-void InputReader::setVideoDataContext(DataContext *videoDataContext)
+void InputThread::setVideoDataContext(DataContext *videoDataContext)
 {
     this->videoDataContext = videoDataContext;
 }
 
-void InputReader::setAudioDataContext(DataContext *audioDataContext)
+void InputThread::setAudioDataContext(DataContext *audioDataContext)
 {
     this->audioDataContext  = audioDataContext;
 }
 
-void InputReader::begin()
+void InputThread::begin()
 {
     this->start();
 }
 
-void InputReader::finish()
+void InputThread::finish()
 {
     this->requestInterruption();
     this->quit();
 }
 
-void InputReader::run()
+void InputThread::run()
 {
-    avFormat = new AvFormat();
+    avFormat = new InputFormat();
 
     if(avFormat->openFormat(path) < 0)
     {
@@ -90,5 +90,7 @@ void InputReader::run()
             sleep(1);
 
     }
+
+    this->deleteLater();
 
 }

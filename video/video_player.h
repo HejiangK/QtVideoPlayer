@@ -9,9 +9,9 @@
 #include <QPainter>
 #include <QMessageBox>
 
-#include "video/render/audio_thread.h"
-#include "video/render/video_thread.h"
-#include "video/demuxer/input_reader.h"
+#include "video/render/audio_render.h"
+#include "video/render/video_render.h"
+#include "video/input/input_thread.h"
 
 class VideoPlayer : public QWidget
 {
@@ -29,23 +29,15 @@ public:
 
 protected slots:
 
-    void onAudioData(uint8_t *buffer,int length,int64_t pts);
-
-    void onVideoFrame(const QImage &frame);
-
-protected:
-
-    void paintEvent(QPaintEvent *event) override;
+    void resizeEvent(QResizeEvent *event) override;
 
 private:
 
-    QImage          curFrame;
+    VideoRender     *videoRender;
 
-    VideoThread     *videoThread;
+    AudioRender     *audioRender;
 
-    AudioThread     *audioThread;
-
-    InputReader     *inputReader;
+    InputThread     *inputThread;
 
 };
 

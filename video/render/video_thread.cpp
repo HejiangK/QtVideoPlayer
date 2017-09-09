@@ -58,11 +58,13 @@ void VideoThread::run()
 
         QImage img(imageContext->buffer, size.width(), size.height(), QImage::Format_RGB32);
 
-        emit renderFrame(img);
+        emit onFrame(img);
 
         delete videoFrame;
 
     }
 
     delete imageContext;
+
+    this->deleteLater();
 }

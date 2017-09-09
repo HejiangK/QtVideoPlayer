@@ -36,11 +36,13 @@ set(
         video/data/audio_cvt.h
         video/data/image_cvt.h
 
-        video/demuxer/avformat.h
-        video/demuxer/input_reader.h
+        video/input/input_format.h
+        video/input/input_thread.h
 
         video/render/audio_thread.h
         video/render/video_thread.h
+        video/render/audio_render.h
+        video/render/video_render.h
 )
 
 set(
@@ -55,11 +57,13 @@ set(
         video/data/audio_cvt.cpp
         video/data/image_cvt.cpp
 
-        video/demuxer/avformat.cpp
-        video/demuxer/input_reader.cpp
+        video/input/input_format.cpp
+        video/input/input_thread.cpp
 
         video/render/audio_thread.cpp
         video/render/video_thread.cpp
+        video/render/audio_render.cpp
+        video/render/video_render.cpp
 )
 
 add_executable(

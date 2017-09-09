@@ -9,12 +9,12 @@
 
 #include "video/data/data_context.h"
 
-class AvFormat
+class InputFormat
 {
 public:
-    AvFormat();
+    InputFormat();
 
-    virtual ~AvFormat();
+    virtual ~InputFormat();
 
     int openFormat(const char *path);
 

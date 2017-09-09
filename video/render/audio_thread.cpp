@@ -59,4 +59,6 @@ void AudioThread::run()
         delete frame;
 
     }
+
+    this->deleteLater();
 }

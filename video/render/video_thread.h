@@ -26,7 +26,7 @@ public:
 
 signals:
 
-    void renderFrame(const QImage &frame);
+    void onFrame(const QImage &frame);
 
 protected:
     void run() override;
