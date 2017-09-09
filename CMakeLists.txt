@@ -7,6 +7,14 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/modules")
 
+if(QT_DIR)
+
+    message("Qt path is : ${QT_DIR}")
+
+    set(CMAKE_PREFIX_PATH ${QT_DIR})
+
+endif(QT_DIR)
+
 find_package(
         FFmpeg
         REQUIRED
@@ -66,11 +74,24 @@ set(
         video/render/video_render.cpp
 )
 
-add_executable(
-        QtVideoPlayer
-        ${SRC_HEADERS}
-        ${SRC_CPPS}
-        )
+if(WIN32)
+    add_executable(
+            QtVideoPlayer
+            WIN32
+            ${SRC_HEADERS}
+            ${SRC_CPPS}
+    )
+
+else(WIN32)
+
+    add_executable(
+            QtVideoPlayer
+            MACOSX_BUNDLE
+            ${SRC_HEADERS}
+            ${SRC_CPPS}
+    )
+endif(WIN32)
+
 
 target_link_libraries(
         QtVideoPlayer
